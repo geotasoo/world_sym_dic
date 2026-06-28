@@ -193,7 +193,7 @@
   .anthem-video iframe { display: block; width: 100%; aspect-ratio: 16 / 9; border: none; }
   #col-info {
     background: var(--col-info-bg); color: #1e2a35; padding: 2rem 1.5rem 4rem; min-height: 100vh;
-    border-right: 1px solid var(--border); min-width: 480px; max-width: 480px; width: 480px; flex-shrink: 0;
+    border-right: 1px solid var(--border); min-width: 380px; max-width: 380px; width: 380px; flex-shrink: 0;
   }
   .info-meaning { font-size: 12px; color: var(--ink-muted); margin-top: 0; line-height: 1.6; }
   .info-meaning::before { content: '뜻'; display: block; color: var(--ink-faint); font-weight: 500; font-size: 9px; letter-spacing: 0.1em; margin-bottom: 5px; }
@@ -326,7 +326,7 @@
 
 <nav id="sidebar">
   <div id="mobile-topbar">
-    <div id="mtb-title" onclick="selectRandom()" title="랜덤 나라·지역 보기">🗺️ 세계 상징 사전 <span id="mtb-credit">@geotasoo / 20260612</span></div>
+    <div id="mtb-title" onclick="selectRandom()" title="랜덤 나라·지역 보기">🗺️ 세계 상징 사전 <span id="mtb-credit">@geotasoo / 20260628</span></div>
     <button id="mobile-list-toggle" onclick="toggleMobileList()">
       <span id="mlt-label">≡ 나라·지역 선택</span>
       <span id="mlt-current"></span>
@@ -638,7 +638,7 @@ function ytEmbedUrl(raw) {
   else if ((m = v.match(/youtube\.com\/shorts\/([A-Za-z0-9_-]{6,})/))) id = m[1];
   else if (/^[A-Za-z0-9_-]{6,}$/.test(v)) id = v;
   if (!id) return '';
-  return 'https://www.youtube.com/embed/' + id + '?controls=0&modestbranding=1&rel=0&iv_load_policy=3';
+  return 'https://www.youtube.com/embed/' + id + '?controls=1&modestbranding=1&rel=0&iv_load_policy=3';
 }
 
 const COLOR_MAP = {
