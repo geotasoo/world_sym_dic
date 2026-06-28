@@ -72,12 +72,7 @@
   .ci-name small { display: block; font-size: 9px; color: var(--sb-text-sub); margin-top: 1px; }
   #main { margin-left: calc(var(--col1) + var(--col2)); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
   #welcome { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; padding: 3rem; text-align: center; }
-  #welcome .globe { font-size: 60px; opacity: 0.85; animation: globe-bounce 1.8s ease-in-out infinite; }
-  @keyframes globe-bounce {
-    0%, 100% { transform: translateY(0) rotate(-6deg); }
-    50% { transform: translateY(-16px) rotate(6deg); }
-  }
-  #welcome-trivia { margin-top: 2rem; max-width: 440px; animation: wt-fade 0.5s ease; }
+  #welcome-trivia { max-width: 440px; animation: wt-fade 0.5s ease; }
   @keyframes wt-fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
   .wt-label { font-size: 11px; letter-spacing: 0.08em; color: var(--hl); font-weight: 600; margin-bottom: 10px; }
   .wt-text { font-size: 15px; line-height: 1.7; color: var(--ink-muted); word-break: keep-all; }
@@ -377,7 +372,6 @@
 
 <main id="main">
   <div id="welcome">
-    <div class="globe">🌍</div>
     <div id="welcome-trivia">
       <div class="wt-label">💡 알고 있나요?</div>
       <div class="wt-text" id="wt-text"></div>
