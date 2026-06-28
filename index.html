@@ -257,13 +257,15 @@
     .sum-row { flex-direction: column; gap: 1px; }
     .sum-row .sum-label { width: auto; }
     #sidebar { width: 100%; height: auto; position: relative; min-height: auto; overflow: visible; }
-    /* 상단 고정바: 타이틀(왼쪽) + 메뉴토글(오른쪽) */
+    /* 상단 고정바: 화면 최상단 완전 고정 */
     #mobile-topbar {
       display: flex !important; align-items: center; justify-content: space-between;
-      position: sticky; top: 0; z-index: 200;
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
       background: var(--sb-bg); border-bottom: 1px solid var(--sb-line);
       padding: 0 0.5rem 0 1rem;
     }
+    /* 고정바 높이만큼 본문 아래로 */
+    body { padding-top: 52px; }
     #mtb-title {
       font-family: 'Noto Serif KR', serif; font-size: 15px; font-weight: 600;
       color: #fff; cursor: pointer; white-space: nowrap; flex-shrink: 0;
@@ -276,7 +278,7 @@
       padding: 12px 0.5rem; justify-content: flex-end; flex: 1; text-align: right;
     }
     #mobile-list-toggle #mlt-label { display: none; }
-    #mobile-list-toggle #mlt-current { display: none; }
+    #mobile-list-toggle #mlt-current { display: inline; color: var(--hl); font-weight: 500; font-size: 13px; margin-right: 6px; white-space: nowrap; }
     #mlt-icon { font-size: 20px; color: var(--sb-text); }
     #sidebar-inner { display: none; }
     #sidebar.list-open #sidebar-inner { display: block; max-height: 75vh; overflow-y: auto; }
@@ -330,9 +332,9 @@
   <div id="mobile-topbar">
     <div id="mtb-title" onclick="selectRandom()" title="랜덤 나라·지역 보기">🗺️ 세계 상징 사전 <span id="mtb-credit">20260629</span></div>
     <button id="mobile-list-toggle" onclick="toggleMobileList()">
-      <span id="mlt-icon">≡</span>
-      <span id="mlt-label">나라·지역 선택</span>
       <span id="mlt-current"></span>
+      <span id="mlt-label">나라·지역 선택</span>
+      <span id="mlt-icon">≡</span>
     </button>
   </div>
   <div id="sidebar-inner">
@@ -611,7 +613,7 @@ function selectCountry(idx) {
   document.getElementById('welcome').style.display = 'none';
   document.getElementById('country-page').style.display = 'flex';
   const mltCur = document.getElementById('mlt-current');
-  if (mltCur) mltCur.textContent = c.name ? '· ' + c.name : '';
+  if (mltCur) mltCur.textContent = c.name || '';
   closeMobileList();
   window.scrollTo({ top: 0, behavior: 'auto' });
 }
