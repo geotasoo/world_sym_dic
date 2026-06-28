@@ -72,7 +72,15 @@
   .ci-name small { display: block; font-size: 9px; color: var(--sb-text-sub); margin-top: 1px; }
   #main { margin-left: calc(var(--col1) + var(--col2)); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
   #welcome { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; padding: 3rem; text-align: center; }
-  #welcome .globe { font-size: 52px; opacity: 0.4; }
+  #welcome .globe { font-size: 60px; opacity: 0.85; animation: globe-bounce 1.8s ease-in-out infinite; }
+  @keyframes globe-bounce {
+    0%, 100% { transform: translateY(0) rotate(-6deg); }
+    50% { transform: translateY(-16px) rotate(6deg); }
+  }
+  #welcome-trivia { margin-top: 2rem; max-width: 440px; animation: wt-fade 0.5s ease; }
+  @keyframes wt-fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .wt-label { font-size: 11px; letter-spacing: 0.08em; color: var(--hl); font-weight: 600; margin-bottom: 10px; }
+  .wt-text { font-size: 15px; line-height: 1.7; color: var(--ink-muted); word-break: keep-all; }
   #country-page { display: none; flex-direction: column; flex: 1; }
   #sticky-head { position: sticky; top: 0; z-index: 10; background: #fff; }
   #top-bar {
@@ -370,6 +378,10 @@
 <main id="main">
   <div id="welcome">
     <div class="globe">🌍</div>
+    <div id="welcome-trivia">
+      <div class="wt-label">💡 알고 있나요?</div>
+      <div class="wt-text" id="wt-text"></div>
+    </div>
   </div>
 
   <div id="notice-float">
@@ -414,6 +426,61 @@
 </main>
 
 <script>
+const TRIVIA = [
+  "네팔 국기는 세계에서 유일하게 사각형이 아니에요.",
+  "덴마크 국기는 현재 쓰이는 국기 중 세계에서 가장 오래됐어요.",
+  "파라과이 국기는 앞면과 뒷면 문양이 다른 유일한 국기예요.",
+  "차드와 루마니아 국기는 거의 똑같이 생겼어요.",
+  "스위스와 바티칸 국기만 정사각형이에요.",
+  "리비아는 한때 아무 무늬 없는 초록색 단색 국기를 썼어요.",
+  "캐나다 국기의 단풍잎은 11개의 꼭짓점을 가지고 있어요.",
+  "키프로스는 자기 나라 영토 지도를 국기에 그렸어요.",
+  "벨리즈 국기에는 두 명의 벌목꾼, 즉 사람이 그려져 있어요.",
+  "방글라데시 국기의 원은 일부러 깃대 쪽으로 살짝 치우쳐 있어요.",
+  "멕시코 국장에는 독수리가 뱀을 물고 있어요. 아즈텍 건국 신화에서 왔어요.",
+  "부탄은 '천둥용의 나라'라는 뜻으로, 국기에 흰 용이 그려져 있어요.",
+  "모잠비크 국기에는 AK-47 소총이 그려져 있어요.",
+  "웨일스 국기에는 빨간 용이 그려져 있어요.",
+  "스리랑카 국기에는 칼을 든 사자가 그려져 있어요.",
+  "인도 국기 가운데 바퀴는 '아소카 차크라'라는 고대 인도의 법륜이에요.",
+  "이스라엘 국기 가운데 별은 '다윗의 별'이에요.",
+  "몽골 국기의 '소욤보'는 불·해·달 등을 담은 몽골 고유의 상징이에요.",
+  "캄보디아 국기에는 사원(앙코르와트)이 그려져 있어요.",
+  "사우디아라비아 국기에는 아랍어 문장과 칼이 그려져 있어요.",
+  "레바논 국기 가운데에는 백향목(삼나무)이 그려져 있어요.",
+  "호주와 뉴질랜드 국기의 별은 남반구에서 보이는 '남십자성'이에요.",
+  "미국 국기의 별 50개는 주, 줄무늬 13개는 독립 당시 13개 식민지예요.",
+  "한국 국기의 태극은 음양, 네 모서리 괘는 하늘·땅·물·불을 뜻해요.",
+  "일본 국기의 빨간 원은 떠오르는 태양을 상징해요.",
+  "영국 국기 '유니언잭'은 잉글랜드·스코틀랜드·아일랜드 십자가를 합친 거예요.",
+  "노르딕 국가들의 국기에는 모두 옆으로 치우친 십자가가 있어요.",
+  "초록·노랑·빨강은 '범아프리카 색'으로, 에티오피아에서 비롯됐어요.",
+  "튀르키예·파키스탄 등 많은 이슬람 국가 국기에 초승달이 있어요.",
+  "남아프리카공화국 국기는 6가지 색으로, 가장 색이 많은 국기 중 하나예요.",
+  "아르헨티나·우루과이 국기의 '5월의 태양'은 잉카 태양신에서 왔어요.",
+  "이탈리아·프랑스·아일랜드처럼 세로 삼색기를 쓰는 나라가 많아요.",
+  "러시아는 세계에서 가장 넓은 나라로, 11개의 시간대를 가져요.",
+  "바티칸은 세계에서 가장 작은 나라예요.",
+  "칠레는 남북으로 4,000km가 넘게 길쭉한 나라예요.",
+  "캐나다는 세계에서 호수가 가장 많은 나라예요.",
+  "모나코는 바티칸 다음으로 작은 나라예요.",
+  "러시아는 무려 14개 나라와 국경을 맞대고 있어요.",
+  "네팔에는 세계에서 가장 높은 산, 에베레스트가 있어요.",
+  "인도네시아는 무려 1만 7천 개가 넘는 섬으로 이루어져 있어요.",
+  "에티오피아는 아프리카에서 식민 지배를 받지 않은 거의 유일한 나라예요.",
+  "투발루는 인터넷 주소 '.tv'를 빌려주고 수입을 얻어요.",
+  "'그린란드(초록 땅)'는 사실 대부분 얼음으로 덮여 있어요.",
+  "아이슬란드(얼음 땅)는 이름과 달리 의외로 푸른 곳이 많아요.",
+  "에콰도르는 스페인어로 '적도'라는 뜻이에요.",
+  "코스타리카는 군대가 없는 나라로 유명해요.",
+  "싱가포르는 나라 전체가 하나의 도시인 '도시국가'예요.",
+  "산마리노는 세계에서 가장 오래된 공화국이라고 알려져 있어요."
+];
+function showRandomTrivia() {
+  const el = document.getElementById('wt-text');
+  if (el) el.textContent = TRIVIA[Math.floor(Math.random() * TRIVIA.length)];
+}
+
 const FALLBACK_COUNTRIES = [];
 const SHEET_ID = '18HUgccAJurqfaIpn8wWuwUOdB0Q_pMTPPxg28a5oZ58';
 const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0`;
@@ -1035,6 +1102,7 @@ document.addEventListener('keydown', function(e) {
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').catch(function(){});
 }
+showRandomTrivia();
 loadFromSheet();
 </script>
 </body>
